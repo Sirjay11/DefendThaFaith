@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defend the Faith — Theological & Historical Research</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-white text-gray-900">
+
+  <!-- ==================== MINIMAL EDITORIAL HEADER ==================== -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+      <!-- Brand Identity -->
+      <button onclick="resetToHome()" class="flex items-center gap-2.5 text-left group focus:outline-none">
+        <span class="w-7 h-7 rounded bg-amber-950 text-white flex items-center justify-center text-xs font-bold tracking-wider">
+          DF
+        </span>
+        <div>
+          <span class="text-sm font-bold tracking-tight text-gray-900 group-hover:text-amber-900 transition">
+            Defend the Faith
+          </span>
+          <span class="hidden sm:inline-block ml-2 text-[11px] text-gray-500">
+            Theological &amp; Historical Research
+          </span>
+        </div>
+      </button>
+
+      <!-- Restrained Secondary Controls -->
+      <div class="flex items-center gap-2 sm:gap-3 text-xs">
+        <button
+          onclick="resetToHome()"
+          id="nav-new-btn"
+          class="hidden px-3 py-1.5 rounded-md border border-gray-300 hover:border-gray-400 text-gray-700 font-medium transition"
+        >
+          + New Question
+        </button>
+
+        <button
+          onclick="toggleHistoryDrawer(true)"
+          class="px-3 py-1.5 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-900 font-medium transition"
+        >
+          Saved Research (<span id="saved-count">0</span>)
+        </button>
+
+        <button
+          onclick="toggleEngineDrawer(true)"
+          class="px-3 py-1.5 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-900 font-medium transition flex items-center gap-1.5"
+          title="Optional Library & Index Maintenance"
+        >
+          <span>Library Index</span>
+          <span id="hermes-badge" class="px-1.5 py-0.2 rounded-full bg-amber-900 text-white text-[10px] font-bold hidden">1</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN WORKSPACE ==================== -->
+  <main class="flex-1 flex flex-col">
+
+    <!-- 1. INITIAL CENTERED HOMEPAGE VIEW -->
+    <section id="home-hero" class="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-12 sm:py-20 max-w-3xl mx-auto w-full text-center">
+      <div class="space-y-4 mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-100 border border-stone-200 text-[11px] font-medium text-stone-700 tracking-wide uppercase">
+          Source-Grounded Christian Apologetics
+        </div>
+
+        <h1 class="editorial-serif text-3xl sm:text-5xl font-normal tracking-tight text-gray-950 leading-tight">
+          CAN YOU DEFEND WHAT YOU BELIEVE?
+        </h1>
+
+        <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          Get clear, evidence-based answers to difficult challenges against Christianity.
+          Explore the sources, understand the arguments, and prepare for the questions that come next.
+        </p>
+      </div>
+
+      <!-- Primary Question Input Box -->
+      <div class="w-full prompt-shell rounded-2xl p-2 sm:p-3 mb-6">
+        <textarea
+          id="home-question-input"
+          rows="2"
+          placeholder="What is the toughest question someone has asked you about your Christian faith?"
+          class="w-full resize-none border-0 bg-transparent px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:outline-none"
+          onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); submitFromHome(); }"
+        ></textarea>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 px-2 border-t border-gray-100">
+          <!-- Subtle Research Focus Selector -->
+          <div class="flex items-center gap-1 text-xs text-gray-500">
+            <span class="mr-1 font-medium text-gray-400">Lens:</span>
+            <button onclick="setResearchMode('exegetical_archive')" id="mode-exegetical_archive" class="px-2.5 py-1 rounded-md bg-stone-900 text-white font-medium transition">
+              Exegetical Archive
+            </button>
+            <button onclick="setResearchMode('comparative_analysis')" id="mode-comparative_analysis" class="px-2.5 py-1 rounded-md text-gray-600 hover:bg-stone-100 transition">
+              Comparative
+            </button>
+            <button onclick="setResearchMode('primary_sources')" id="mode-primary_sources" class="px-2.5 py-1 rounded-md text-gray-600 hover:bg-stone-100 transition">
+              Primary Texts
+            </button>
+          </div>
+
+          <button
+            onclick="submitFromHome()"
+            class="px-5 py-2 rounded-xl bg-amber-900 hover:bg-amber-950 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5"
+          >
+            <span>Research Answer</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Suggested Intellectual Challenges -->
+      <div class="w-full text-left space-y-2.5">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 text-center">
+          Explore Difficult Questions
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <button
+            onclick="askQuestion('If Jesus is God, why does He pray to the Father?')"
+            class="p-3 rounded-xl surface-card hover:border-gray-400 text-left text-gray-800 hover:text-gray-950 transition flex items-start justify-between gap-2"
+          >
+            <span>If Jesus is God, why does He pray to the Father?</span>
+            <span class="text-gray-400">→</span>
+          </button>
+
+          <button
+            onclick="askQuestion('Does the Quran affirm the Bible or contradict it?')"
+            class="p-3 rounded-xl surface-card hover:border-gray-400 text-left text-gray-800 hover:text-gray-950 transition flex items-start justify-between gap-2"
+          >
+            <span>Does the Quran affirm the Bible or contradict it?</span>
+            <span class="text-gray-400">→</span>
+          </button>
+
+          <button
+            onclick="askQuestion('Does Philippians 2:10-11 identify Jesus as Yahweh?')"
+            class="p-3 rounded-xl surface-card hover:border-gray-400 text-left text-gray-800 hover:text-gray-950 transition flex items-start justify-between gap-2"
+          >
+            <span>Does Philippians 2:10–11 identify Jesus as Yahweh?</span>
+            <span class="text-gray-400">→</span>
+          </button>
+
+          <button
+            onclick="askQuestion('Does the Quran and Sahih al-Bukhari 3448 teach that Jesus is the Word of God in Surah 4:171, and how does that compare with John 1:1?')"
+            class="p-3 rounded-xl surface-card hover:border-gray-400 text-left text-gray-800 hover:text-gray-950 transition flex items-start justify-between gap-2"
+          >
+            <span>Does the Quran teach that Jesus is the Word of God (Surah 4:171 vs. John 1:1)?</span>
+            <span class="text-gray-400">→</span>
+          </button>
+
+          <button
+            onclick="askQuestion('Why does Jesus call the Father the only true God in John 17:3?')"
+            class="p-3 rounded-xl surface-card hover:border-gray-400 text-left text-gray-800 hover:text-gray-950 transition flex items-start justify-between gap-2"
+          >
+            <span>Why does Jesus call the Father "the only true God" in John 17:3?</span>
+            <span class="text-gray-400">→</span>
+          </button>
+
+          <button
+            onclick="askQuestion('Did Jesus deny being God when He asked Why do you call me good in Mark 10:18?')"
+            class="p-3 rounded-xl surface-card hover:border-gray-400 text-left text-gray-800 hover:text-gray-950 transition flex items-start justify-between gap-2"
+          >
+            <span>Why did Jesus ask "Why do you call Me good?" in Mark 10:18?</span>
+            <span class="text-gray-400">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. CONVERSATIONAL RESEARCH STREAM (Active once a question is asked) -->
+    <section id="conversation-view" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto px-4 sm:px-6 pt-6 pb-32">
+      <!-- Thread Turns Container -->
+      <div id="thread-container" class="space-y-10"></div>
+
+      <!-- Sticky Bottom Follow-Up Input Bar -->
+      <div class="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-white/80 pt-3 pb-4 px-4 border-t border-gray-200 z-20">
+        <div class="max-w-3xl mx-auto">
+          <div class="prompt-shell rounded-2xl p-2 flex items-center gap-2">
+            <input
+              id="followup-input"
+              type="text"
+              placeholder="Ask a follow-up question or test an objection (retains conversation context)..."
+              class="flex-1 bg-transparent px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none"
+              onkeydown="if(event.key==='Enter') submitFollowUp()"
+            />
+            <button
+              onclick="submitFollowUp()"
+              id="followup-btn"
+              class="px-4 py-2 rounded-xl bg-amber-900 hover:bg-amber-950 text-white text-xs font-semibold transition whitespace-nowrap"
+            >
+              Ask Follow-Up →
+            </button>
+          </div>
+          <div class="text-[11px] text-gray-400 text-center mt-1.5">
+            Independent theological research archive drawing upon primary texts and classical commentary. Every claim is linked to its reference.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== OPTIONAL DRAWER 1: SAVED RESEARCH SESSIONS ==================== -->
+  <div id="history-drawer" class="fixed inset-0 z-40 hidden">
+    <div onclick="toggleHistoryDrawer(false)" class="absolute inset-0 drawer-backdrop"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white border-l border-gray-200 shadow-xl flex flex-col">
+      <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-bold text-gray-900">Saved Research Sessions</h3>
+          <p class="text-xs text-gray-500">Reopen previous questions and rebuttal trees.</p>
+        </div>
+        <button onclick="toggleHistoryDrawer(false)" class="text-xs px-2.5 py-1 rounded border border-gray-300 text-gray-600 hover:text-gray-900">
+          Close ✕
+        </button>
+      </div>
+      <div id="saved-sessions-list" class="p-4 space-y-2.5 overflow-y-auto flex-1 text-xs"></div>
+    </div>
+  </div>
+
+  <!-- ==================== OPTIONAL DRAWER 2: LIBRARY & INDEX MAINTENANCE ==================== -->
+  <div id="engine-drawer" class="fixed inset-0 z-40 hidden">
+    <div onclick="toggleEngineDrawer(false)" class="absolute inset-0 drawer-backdrop"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-3xl bg-white border-l border-gray-200 shadow-2xl flex flex-col">
+      <div class="p-4 border-b border-gray-200 flex flex-wrap items-center justify-between gap-2 bg-stone-50">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-bold text-gray-900">Library Catalog &amp; Index Maintenance</h3>
+          </div>
+          <p class="text-xs text-gray-500">
+            <strong id="hdr-sources">-</strong> Verified Commentaries · <strong id="hdr-scriptures">-</strong> Primary Passages
+          </p>
+        </div>
+        <button onclick="toggleEngineDrawer(false)" class="text-xs px-3 py-1.5 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 font-medium">
+          Close Drawer ✕
+        </button>
+      </div>
+
+      <!-- Sub-tabs inside the Drawer -->
+      <div class="px-4 pt-2 border-b border-gray-200 flex gap-6 text-xs bg-stone-50">
+        <button onclick="switchEngineTab('hermes')" id="eng-tab-btn-hermes" class="pb-2 border-b-2 border-amber-900 text-amber-900 font-bold">
+          Index Maintenance &amp; Quality Benchmark
+        </button>
+        <button onclick="switchEngineTab('sources')" id="eng-tab-btn-sources" class="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 font-medium">
+          Source Catalog &amp; Argument Splitter
+        </button>
+      </div>
+
+      <!-- Drawer Body -->
+      <div class="p-5 overflow-y-auto flex-1 space-y-6">
+        <!-- Sub-Tab 1: Maintenance Operations -->
+        <div id="eng-tab-hermes" class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            <button onclick="runHermesJob('discover')" class="p-3 rounded-lg surface-card hover:border-gray-400 text-left transition space-y-1">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-amber-900">Task A · Discovery</div>
+              <div class="text-xs font-bold text-gray-900">Scan Catalog Indexes</div>
+              <p class="text-[11px] text-gray-500">Detect unindexed studies for editorial review.</p>
+            </button>
+            <button onclick="runHermesJob('normalize')" class="p-3 rounded-lg surface-card hover:border-gray-400 text-left transition space-y-1">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Task B · Maintenance</div>
+              <div class="text-xs font-bold text-gray-900">Audit &amp; Pair Chunks</div>
+              <p class="text-[11px] text-gray-500">Verify objection-to-rebuttal links &amp; citations.</p>
+            </button>
+            <button onclick="runHermesJob('qa_benchmark')" class="p-3 rounded-lg surface-card hover:border-gray-400 text-left transition space-y-1">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-sky-800">Task C · Verification</div>
+              <div class="text-xs font-bold text-gray-900">Run Quality Suite</div>
+              <p class="text-[11px] text-gray-500">Verify recall, citation accuracy &amp; abstention.</p>
+            </button>
+            <button onclick="runHermesJob('gap_analysis')" class="p-3 rounded-lg surface-card hover:border-gray-400 text-left transition space-y-1">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-purple-900">Task D · Gap Analysis</div>
+              <div class="text-xs font-bold text-gray-900">Analyze Query Gaps</div>
+              <p class="text-[11px] text-gray-500">Inspect unanswered questions.</p>
+            </button>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500">Pipeline Log &amp; Editorial Review Queue</h4>
+            <div id="hermes-jobs-list" class="space-y-3"></div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500">Verification Benchmark Suite</h4>
+            <div id="gold-questions-list" class="space-y-1.5"></div>
+          </div>
+        </div>
+
+        <!-- Sub-Tab 2: Source Catalog & Splitter -->
+        <div id="eng-tab-sources" class="hidden space-y-5">
+          <div class="surface-card rounded-xl p-4 space-y-3">
+            <div class="text-xs font-bold uppercase tracking-wider text-amber-900">Argument-Aware Study Splitter</div>
+            <p class="text-xs text-gray-600">
+              Splits raw commentary text into <code class="text-rose-700 font-semibold">quoted_objection</code> vs. <code class="text-emerald-800 font-semibold">author_argument</code> chunks, links them via <code class="font-semibold">paired_chunk_id</code>, and stages for review.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <input id="ing-title" type="text" value="Jesus' Sinlessness in Surah 19:19 and Sahih Muslim 2365 vs. Romans 3:23" class="rounded border border-gray-300 bg-white px-3 py-1.5 text-gray-900" />
+              <input id="ing-url" type="text" value="https://biblehub.com/commentaries/hebrews/4-15.htm" class="rounded border border-gray-300 bg-white px-3 py-1.5 text-gray-900" />
+            </div>
+            <textarea id="ing-text" rows="4" class="w-full rounded border border-gray-300 bg-white p-2.5 text-xs text-gray-800 font-mono"># Objection on Human Prophets:
+Critics argue that Jesus being sinless in Surah 19:19 and Sahih Muslim 2365 merely reflects general prophetic protection ('ismah) rather than divine nature.
+
+# Rebuttal from Primary Texts and Scripture:
+Classical exegesis notes that the primary texts refute this claim: whereas other prophets ask forgiveness for their sins (Surah 40:55, Surah 47:19), Sahih Muslim 2365 explicitly declares that every human child is touched by Satan at birth except Jesus and Mary, echoing Hebrews 4:15 and 1 Peter 2:22.</textarea>
+            <div class="flex items-center justify-between gap-2">
+              <button onclick="stageCustomArticle()" class="px-3.5 py-1.5 rounded bg-amber-900 hover:bg-amber-950 text-white text-xs font-semibold">
+                Stage in Editorial Review Queue →
+              </button>
+              <span id="ing-feedback" class="text-xs text-emerald-700 font-medium"></span>
+            </div>
+          </div>
+
+          <div id="sources-container" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== APPLICATION LOGIC ==================== -->
+  <script>
+    let currentResearchMode = 'exegetical_archive';
+    let activeParentContext = '';
+    let savedSessions = [];
+
+    try {
+      savedSessions = JSON.parse(localStorage.getItem('defend_the_faith_sessions') || '[]');
+    } catch (e) {
+      savedSessions = [];
+    }
+
+    function updateSavedCount() {
+      document.getElementById('saved-count').textContent = savedSessions.length;
+    }
+
+    function saveSessionItem(question, answerData) {
+      if (!question || !answerData) return;
+      savedSessions = savedSessions.filter(s => s.question.toLowerCase() !== question.toLowerCase());
+      savedSessions.unshift({
+        question,
+        classification: answerData.classification,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        data: answerData
+      });
+      if (savedSessions.length > 15) savedSessions.pop();
+      try {
+        localStorage.setItem('defend_the_faith_sessions', JSON.stringify(savedSessions));
+      } catch (e) {}
+      updateSavedCount();
+    }
+
+    async function refreshStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('hdr-sources').textContent = data.counts.sources;
+        document.getElementById('hdr-scriptures').textContent = data.counts.scriptures;
+
+        const badge = document.getElementById('hermes-badge');
+        if (data.counts.pending_approvals > 0) {
+          badge.textContent = data.counts.pending_approvals;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      } catch (e) {}
+    }
+
+    function setResearchMode(mode) {
+      currentResearchMode = mode;
+      ['exegetical_archive', 'comparative_analysis', 'primary_sources'].forEach(m => {
+        const btn = document.getElementById(`mode-${m}`);
+        if (!btn) return;
+        if (m === mode) {
+          btn.className = 'px-2.5 py-1 rounded-md bg-stone-900 text-white font-medium transition';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-md text-gray-600 hover:bg-stone-100 transition';
+        }
+      });
+    }
+
+    function resetToHome() {
+      activeParentContext = '';
+      document.getElementById('home-hero').classList.remove('hidden');
+      document.getElementById('conversation-view').classList.add('hidden');
+      document.getElementById('nav-new-btn').classList.add('hidden');
+      document.getElementById('thread-container').innerHTML = '';
+      document.getElementById('home-question-input').value = '';
+      document.getElementById('home-question-input').focus();
+    }
+
+    function submitFromHome() {
+      const q = document.getElementById('home-question-input').value.trim();
+      if (!q) return;
+      askQuestion(q, '');
+    }
+
+    function submitFollowUp() {
+      const input = document.getElementById('followup-input');
+      const q = input.value.trim();
+      if (!q) return;
+      input.value = '';
+      askQuestion(q, activeParentContext);
+    }
+
+    async function askQuestion(question, parentContext = '') {
+      document.getElementById('home-hero').classList.add('hidden');
+      document.getElementById('conversation-view').classList.remove('hidden');
+      document.getElementById('nav-new-btn').classList.remove('hidden');
+
+      const thread = document.getElementById('thread-container');
+      const turnId = 'turn-' + Date.now();
+
+      const turnWrapper = document.createElement('article');
+      turnWrapper.id = turnId;
+      turnWrapper.className = 'space-y-6 border-b border-gray-200 pb-10';
+      turnWrapper.innerHTML = `
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            ${parentContext ? `<div class="text-[11px] text-gray-400 mb-1">Follow-up in context of: "${escapeHtml(parentContext)}"</div>` : ''}
+            <h2 class="editorial-serif text-2xl sm:text-3xl text-gray-950 font-normal leading-snug">
+              ${escapeHtml(question)}
+            </h2>
+          </div>
+        </div>
+        <div class="surface-card rounded-xl p-5 text-sm text-gray-600 animate-pulse">
+          Searching verified commentary archives, primary Biblical &amp; historical texts, and building the rebuttal tree...
+        </div>
+      `;
+      thread.appendChild(turnWrapper);
+      turnWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      try {
+        const res = await fetch('/api/research/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question,
+            parent_context: parentContext,
+            research_mode: currentResearchMode,
+            use_llm: true
+          })
+        });
+        const data = await res.json();
+        activeParentContext = question;
+        saveSessionItem(question, data);
+        turnWrapper.innerHTML = buildTurnHtml(data, turnId);
+        refreshStatus();
+      } catch (err) {
+        turnWrapper.innerHTML = `
+          <div class="p-5 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800">
+            Unable to complete research query: ${escapeHtml(err.message)}
+          </div>
+        `;
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function buildTurnHtml(data, turnId) {
+      if (data.abstained) {
+        return `
+          <div class="space-y-4">
+            <div class="text-xs font-semibold uppercase tracking-wider text-amber-900">
+              ${escapeHtml(data.classification)}
+            </div>
+            <h2 class="editorial-serif text-2xl sm:text-3xl text-gray-950">${escapeHtml(data.question)}</h2>
+            <div class="surface-card rounded-xl p-5 text-sm text-gray-800 leading-relaxed">
+              ${escapeHtml(data.direct_answer || data.short_answer)}
+            </div>
+            <div class="pt-2 space-y-2">
+              <div class="text-xs font-semibold uppercase tracking-wider text-gray-400">Verified Questions Available Now:</div>
+              <div class="flex flex-wrap gap-2">
+                ${(data.explore_further || []).map(q => `
+                  <button onclick="askQuestion('${q.replace(/'/g, "\\'")}')" class="text-xs px-3 py-1.5 rounded-lg surface-card hover:border-gray-400 text-gray-800">
+                    ${escapeHtml(q)} →
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      const scripturesHtml = (data.primary_evidence || []).map(sp => `
+        <div class="p-4 rounded-xl surface-card space-y-1.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-sm font-bold text-amber-950">${escapeHtml(sp.reference)}</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-white border border-gray-200 text-gray-600">
+              ${escapeHtml(sp.corpus)} · ${escapeHtml(sp.translation)}
+            </span>
+          </div>
+          <blockquote class="editorial-serif text-sm text-gray-900 italic leading-relaxed">
+            "${escapeHtml(sp.text_content)}"
+          </blockquote>
+          ${sp.original_language_note ? `
+            <p class="text-xs text-gray-600 pt-1.5 border-t border-gray-200/80">
+              <strong class="text-gray-800">Exegetical &amp; Original-Language Context:</strong> ${escapeHtml(sp.original_language_note)}
+            </p>
+          ` : ''}
+        </div>
+      `).join('');
+
+      const archiveArgsHtml = (data.archive_arguments || []).map(arg => `
+        <div class="p-4 rounded-xl white-card space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-sm font-bold text-gray-900">${escapeHtml(arg.section_title)}</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-stone-100 text-stone-700 border border-stone-200">
+              ${escapeHtml(arg.author || 'Exegetical Research Archive')}
+            </span>
+          </div>
+          <blockquote class="text-sm text-gray-800 border-l-2 border-amber-900 pl-3.5 leading-relaxed">
+            "${escapeHtml(arg.verbatim_quote)}"
+          </blockquote>
+          ${arg.how_it_supports ? `
+            <p class="text-xs text-gray-600">
+              <strong class="text-gray-800">How this supports the conclusion:</strong> ${escapeHtml(arg.how_it_supports)}
+            </p>
+          ` : ''}
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1.5 border-t border-gray-100 text-xs text-gray-500">
+            <span>Reference Study: <strong class="text-gray-800">${escapeHtml(arg.source_title)}</strong></span>
+            <a href="${escapeHtml(arg.source_url)}" target="_blank" rel="noopener" class="text-amber-900 hover:underline font-semibold">
+              Inspect Primary Reference ↗
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+      const reasoningHtml = (data.logical_reasoning || []).map((step, i) => `
+        <div class="flex items-start gap-3 text-sm">
+          <span class="w-6 h-6 rounded-full bg-stone-200 text-stone-800 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+            ${i + 1}
+          </span>
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-amber-900 block">
+              ${escapeHtml(step.step_type)}
+            </span>
+            <p class="text-gray-800 leading-relaxed">${escapeHtml(step.statement)}</p>
+          </div>
+        </div>
+      `).join('');
+
+      const counter = data.counterargument;
+      const counterSection = counter ? `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl surface-card space-y-1.5">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+              D. Substantial Counterargument / Critic's Claim
+            </div>
+            <div class="text-sm font-bold text-gray-900">${escapeHtml(counter.objection_title)}</div>
+            <p class="text-sm text-gray-700 leading-relaxed">"${escapeHtml(counter.objection_claim)}"</p>
+          </div>
+
+          <div class="p-4 rounded-xl white-card border-l-4 border-l-amber-900 space-y-1.5">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-amber-900">
+              E. Exegetical Response
+            </div>
+            <div class="text-sm font-bold text-gray-900">Contextual &amp; Grammatical Refutation</div>
+            <p class="text-sm text-gray-800 leading-relaxed">${escapeHtml(counter.exegetical_rebuttal)}</p>
+          </div>
+        </div>
+      ` : '';
+
+      const convReady = data.conversation_ready_response ? `
+        <div class="p-5 rounded-xl bg-stone-100/90 border border-stone-300 space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-950">
+              F. Conversation-Ready Response (Speak Naturally in Real Conversations)
+            </span>
+            <button
+              onclick="navigator.clipboard.writeText(this.dataset.copy); this.textContent='Copied ✓'"
+              data-copy="${escapeHtml(data.conversation_ready_response)}"
+              class="text-xs px-2.5 py-1 rounded bg-white border border-gray-300 text-gray-700 hover:text-gray-950 font-medium"
+            >
+              Copy Response
+            </button>
+          </div>
+          <p class="editorial-serif text-base text-gray-900 leading-relaxed">
+            ${escapeHtml(data.conversation_ready_response)}
+          </p>
+        </div>
+      ` : '';
+
+      const rebuttalBranchesHtml = (data.rebuttal_tree || []).map((branch, idx) => {
+        const branchDomId = `${turnId}-branch-${idx}`;
+        return `
+          <div id="${branchDomId}" class="rebuttal-branch pl-4 py-1 space-y-2">
+            <button
+              onclick="toggleRebuttalBranch('${branchDomId}', '${branch.question.replace(/'/g, "\\'")}', '${data.question.replace(/'/g, "\\'")}')"
+              class="w-full p-3.5 rounded-xl surface-card hover:border-gray-400 text-left flex items-center justify-between gap-3 transition"
+            >
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-900 block">
+                  ${escapeHtml(branch.label || `Follow-Up Objection ${idx + 1}`)}
+                </span>
+                <span class="text-sm font-semibold text-gray-900">
+                  ${escapeHtml(branch.question)}
+                </span>
+              </div>
+              <span id="${branchDomId}-icon" class="text-xs font-bold text-amber-900 px-2.5 py-1 rounded bg-white border border-gray-200 shrink-0">
+                Expand Rebuttal +
+              </span>
+            </button>
+            <div id="${branchDomId}-body" class="hidden pl-3 sm:pl-5 pt-2 space-y-3"></div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="space-y-7">
+          <!-- Question Header -->
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+              <span class="font-semibold uppercase tracking-wider text-amber-900">${escapeHtml(data.classification)}</span>
+              <span>Verified Sources Checked · Confidence ${data.confidence_score}</span>
+            </div>
+            <h2 class="editorial-serif text-2xl sm:text-3xl text-gray-950 font-normal leading-snug">
+              ${escapeHtml(data.question)}
+            </h2>
+          </div>
+
+          <!-- A. DIRECT ANSWER -->
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500">A. Direct Answer</h3>
+            <p class="text-base text-gray-900 leading-relaxed">
+              ${escapeHtml(data.direct_answer || data.short_answer)}
+            </p>
+          </div>
+
+          <!-- B. EVIDENCE AND PRIMARY SOURCES -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500">B. Primary Scriptural Evidence &amp; Exegetical Commentary</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${scripturesHtml}
+            </div>
+            <div class="space-y-3 pt-1">
+              ${archiveArgsHtml}
+            </div>
+          </div>
+
+          <!-- C. LOGICAL REASONING SEQUENCE -->
+          <div class="space-y-3 p-5 rounded-xl surface-card">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500">C. Logical Reasoning Structure</h3>
+            <div class="space-y-3">
+              ${reasoningHtml}
+            </div>
+          </div>
+
+          <!-- D & E. COUNTERARGUMENTS AND RESPONSES -->
+          <div class="space-y-2">
+            ${counterSection}
+          </div>
+
+          <!-- F. CONVERSATION-READY RESPONSE -->
+          ${convReady}
+
+          <!-- G. EXPANDABLE REBUTTAL TREE -->
+          <div class="space-y-3 pt-2">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-900">
+                G. Expandable Rebuttal Tree — Prepare for the Next Objection
+              </h3>
+              <p class="text-xs text-gray-500">
+                Select any likely follow-up objection below to expand its evidence-backed rebuttal inline without leaving this question.
+              </p>
+            </div>
+            <div class="space-y-2.5">
+              ${rebuttalBranchesHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function toggleRebuttalBranch(branchDomId, branchQuestion, parentQuestion) {
+      const branchWrap = document.getElementById(branchDomId);
+      const bodyEl = document.getElementById(`${branchDomId}-body`);
+      const iconEl = document.getElementById(`${branchDomId}-icon`);
+
+      if (!bodyEl.classList.contains('hidden')) {
+        bodyEl.classList.add('hidden');
+        branchWrap.classList.remove('expanded');
+        iconEl.textContent = 'Expand Rebuttal +';
+        return;
+      }
+
+      bodyEl.classList.remove('hidden');
+      branchWrap.classList.add('expanded');
+      iconEl.textContent = 'Collapse −';
+
+      if (bodyEl.dataset.loaded === 'true') {
+        return;
+      }
+
+      bodyEl.innerHTML = `
+        <div class="p-4 rounded-xl surface-card text-xs text-gray-500 animate-pulse">
+          Retrieving primary passages and commentary for "${escapeHtml(branchQuestion)}"...
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/research/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: branchQuestion,
+            parent_context: parentQuestion,
+            research_mode: currentResearchMode,
+            use_llm: true
+          })
+        });
+        const data = await res.json();
+        bodyEl.dataset.loaded = 'true';
+
+        const subBranches = (data.rebuttal_tree || []).slice(0, 2).map((sb, sIdx) => {
+          const subId = `${branchDomId}-sub-${sIdx}`;
+          return `
+            <div id="${subId}" class="rebuttal-branch pl-3 py-1 space-y-1.5">
+              <button
+                onclick="toggleRebuttalBranch('${subId}', '${sb.question.replace(/'/g, "\\'")}', '${branchQuestion.replace(/'/g, "\\'")}')"
+                class="w-full p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-gray-200 text-left flex items-center justify-between gap-2 text-xs"
+              >
+                <span class="font-medium text-gray-800">↳ ${escapeHtml(sb.question)}</span>
+                <span id="${subId}-icon" class="text-[11px] text-amber-900 font-semibold shrink-0">Expand +</span>
+              </button>
+              <div id="${subId}-body" class="hidden pl-3 pt-1 space-y-2"></div>
+            </div>
+          `;
+        }).join('');
+
+        bodyEl.innerHTML = `
+          <div class="p-4 rounded-xl white-card space-y-3 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-amber-900">
+              Branch Response · ${escapeHtml(data.classification)}
+            </div>
+            <p class="text-sm text-gray-900 leading-relaxed">
+              ${escapeHtml(data.direct_answer || data.short_answer)}
+            </p>
+            ${(data.primary_evidence || []).slice(0, 2).map(sp => `
+              <div class="p-3 rounded-lg surface-card text-xs space-y-1">
+                <div class="font-bold text-amber-950">${escapeHtml(sp.reference)} (${escapeHtml(sp.corpus)})</div>
+                <div class="italic text-gray-800">"${escapeHtml(sp.text_content)}"</div>
+              </div>
+            `).join('')}
+            ${(data.archive_arguments || []).slice(0, 1).map(arg => `
+              <div class="text-xs text-gray-600 flex items-center justify-between pt-1 border-t border-gray-100">
+                <span>Reference: <strong>${escapeHtml(arg.source_title)}</strong></span>
+                <a href="${escapeHtml(arg.source_url)}" target="_blank" class="text-amber-900 font-semibold hover:underline">Primary Reference ↗</a>
+              </div>
+            `).join('')}
+            ${subBranches ? `
+              <div class="pt-2 space-y-1.5">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Deeper Follow-Up Branches:</div>
+                ${subBranches}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      } catch (e) {
+        bodyEl.innerHTML = `<div class="text-xs text-red-700">Failed to load branch: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function toggleHistoryDrawer(open) {
+      const el = document.getElementById('history-drawer');
+      el.classList.toggle('hidden', !open);
+      if (open) renderSavedSessions();
+    }
+
+    function renderSavedSessions() {
+      const list = document.getElementById('saved-sessions-list');
+      if (!savedSessions.length) {
+        list.innerHTML = `<p class="text-gray-400 text-xs">No saved research questions yet. Submit a question on the homepage to begin.</p>`;
+        return;
+      }
+      list.innerHTML = savedSessions.map((s) => `
+        <button
+          onclick="toggleHistoryDrawer(false); askQuestion('${s.question.replace(/'/g, "\\'")}')"
+          class="w-full p-3 rounded-xl surface-card hover:border-gray-400 text-left space-y-1 block"
+        >
+          <div class="flex items-center justify-between text-[10px] text-gray-400">
+            <span class="uppercase font-semibold text-amber-900">${escapeHtml(s.classification || 'Research')}</span>
+            <span>${escapeHtml(s.timestamp || '')}</span>
+          </div>
+          <div class="text-xs font-semibold text-gray-900">${escapeHtml(s.question)}</div>
+        </button>
+      `).join('');
+    }
+
+    function toggleEngineDrawer(open) {
+      const el = document.getElementById('engine-drawer');
+      el.classList.toggle('hidden', !open);
+      if (open) {
+        loadHermesDashboard();
+        loadSourcesCatalog();
+      }
+    }
+
+    function switchEngineTab(tab) {
+      ['hermes', 'sources'].forEach(t => {
+        document.getElementById(`eng-tab-${t}`).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(`eng-tab-btn-${t}`);
+        if (t === tab) {
+          btn.className = 'pb-2 border-b-2 border-amber-900 text-amber-900 font-bold';
+        } else {
+          btn.className = 'pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 font-medium';
+        }
+      });
+    }
+
+    async function stageCustomArticle() {
+      const title = document.getElementById('ing-title').value;
+      const url = document.getElementById('ing-url').value;
+      const raw_text = document.getElementById('ing-text').value;
+      const fb = document.getElementById('ing-feedback');
+      fb.textContent = 'Splitting & staging...';
+
+      const res = await fetch('/api/hermes/ingest-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, url, raw_text })
+      });
+      const data = await res.json();
+      if (data.error) {
+        fb.textContent = `Error: ${data.error}`;
+        return;
+      }
+      fb.textContent = `✓ Staged ${data.chunks.length} chunks in Review Queue!`;
+      await refreshStatus();
+      await loadHermesDashboard();
+      switchEngineTab('hermes');
+    }
+
+    async function loadSourcesCatalog() {
+      const res = await fetch('/api/sources');
+      const data = await res.json();
+      const container = document.getElementById('sources-container');
+      container.innerHTML = data.sources.map(src => `
+        <div class="p-4 rounded-xl white-card space-y-2 text-xs">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase text-amber-900">${escapeHtml(src.topic)}</span>
+              <h4 class="text-sm font-bold text-gray-900">${escapeHtml(src.title)}</h4>
+              <a href="${escapeHtml(src.url)}" target="_blank" class="text-gray-500 hover:underline">${escapeHtml(src.url)}</a>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-stone-100 border border-stone-200 text-stone-700">
+              ${escapeHtml(src.author)}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadHermesDashboard() {
+      const res = await fetch('/api/hermes/dashboard');
+      const data = await res.json();
+
+      const jobsContainer = document.getElementById('hermes-jobs-list');
+      jobsContainer.innerHTML = data.jobs.map(job => `
+        <div class="p-3.5 rounded-xl ${job.status === 'needs_approval' ? 'bg-amber-50/70 border border-amber-300' : 'surface-card'} space-y-2 text-xs">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-gray-900">[${escapeHtml(job.job_type.toUpperCase())}] ${escapeHtml(job.title)}</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+              job.status === 'needs_approval' ? 'bg-amber-900 text-white' : 'bg-stone-200 text-stone-800'
+            }">
+              ${escapeHtml(job.status.replace('_', ' '))}
+            </span>
+          </div>
+          <p class="text-gray-600">${escapeHtml(job.summary)}</p>
+          ${job.status === 'needs_approval' ? `
+            <div class="flex items-center gap-2 pt-1">
+              <button onclick="approveJob('${job.id}')" class="px-3 py-1 rounded bg-emerald-700 hover:bg-emerald-800 text-white font-semibold">
+                ✓ Approve &amp; Index
+              </button>
+              <button onclick="rejectJob('${job.id}')" class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700">
+                ✕ Reject
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+
+      const gqContainer = document.getElementById('gold-questions-list');
+      gqContainer.innerHTML = data.gold_questions.map(gq => `
+        <div class="p-2.5 rounded-lg white-card flex items-center justify-between gap-2 text-xs">
+          <span class="text-gray-800 font-medium">${escapeHtml(gq.question)}</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+            gq.last_status === 'passed' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'
+          }">
+            ${escapeHtml(gq.last_status)} (${gq.last_score})
+          </span>
+        </div>
+      `).join('');
+    }
+
+    async function runHermesJob(jobType) {
+      await fetch(`/api/hermes/run/${jobType}`, { method: 'POST' });
+      await loadHermesDashboard();
+      await refreshStatus();
+    }
+
+    async function approveJob(jobId) {
+      await fetch(`/api/hermes/jobs/${jobId}/approve`, { method: 'POST' });
+      await loadHermesDashboard();
+      await refreshStatus();
+    }
+
+    async function rejectJob(jobId) {
+      await fetch(`/api/hermes/jobs/${jobId}/reject`, { method: 'POST' });
+      await loadHermesDashboard();
+      await refreshStatus();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateSavedCount();
+      refreshStatus();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+:root {
+  --bg-canvas: #ffffff;
+  --bg-surface: #f8f7f4;
+  --bg-elevated: #f3f2ee;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --accent-primary: #7c2d12;
+  --accent-hover: #991b1b;
+  --accent-soft: #fef2f2;
+  --border-hairline: #e5e7eb;
+  --border-strong: #d1d5db;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+.editorial-serif {
+  font-family: var(--font-serif);
+}
+
+.prompt-shell {
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 4px 20px -2px rgba(17, 24, 39, 0.06);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.prompt-shell:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 6px 24px -3px rgba(124, 45, 18, 0.12);
+}
+
+.surface-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+}
+
+.white-card {
+  background-color: var(--bg-canvas);
+  border: 1px solid var(--border-hairline);
+}
+
+.rebuttal-branch {
+  border-left: 2px solid var(--border-strong);
+  transition: border-color 0.15s ease;
+}
+
+.rebuttal-branch.expanded {
+  border-left-color: var(--accent-primary);
+}
+
+.drawer-backdrop {
+  background: rgba(17, 24, 39, 0.25);
+  backdrop-filter: blur(2px);
+}
