@@ -133,6 +133,18 @@ class DefendThaFaithHandler(BaseHTTPRequestHandler):
                 self._send_text(css_path.read_text(encoding="utf-8"), "text/css; charset=utf-8")
             else:
                 self._send_text("", "text/css; charset=utf-8", status=404)
+        elif path == "/archive_engine.js":
+            js_path = PROJECT_ROOT / "frontend" / "archive_engine.js"
+            if js_path.exists():
+                self._send_text(js_path.read_text(encoding="utf-8"), "application/javascript; charset=utf-8")
+            else:
+                self._send_text("", "application/javascript; charset=utf-8", status=404)
+        elif path == "/archive_data.json":
+            json_path = PROJECT_ROOT / "frontend" / "archive_data.json"
+            if json_path.exists():
+                self._send_text(json_path.read_text(encoding="utf-8"), "application/json; charset=utf-8")
+            else:
+                self._send_json({"error": "Not found"}, status=404)
         elif path == "/api/status":
             self._send_json(get_system_status())
         elif path == "/api/sources":

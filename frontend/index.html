@@ -6,6 +6,7 @@
   <title>Defend the Faith — Theological & Historical Research</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/styles.css" />
+  <script src="/archive_engine.js"></script>
 </head>
 <body class="min-h-screen flex flex-col bg-white text-gray-900">
 
@@ -346,10 +347,29 @@ Classical exegesis notes that the primary texts refute this claim: whereas other
       updateSavedCount();
     }
 
+    async function apiJson(path, options = {}) {
+      try {
+        const res = await fetch(path, options);
+        if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+          return await res.json();
+        }
+      } catch (e) {}
+
+      // Automatic Netlify Static/Serverless Fallback using bundled archive_data.json
+      const archive = await getArchiveData();
+      if (path === '/api/status') return archive.status;
+      if (path === '/api/sources') return archive.catalog;
+      if (path === '/api/hermes/dashboard') return archive.dashboard;
+      if (path === '/api/research/query') {
+        const body = options.body ? JSON.parse(options.body) : {};
+        return await queryArchiveClient(body.question || '', body.parent_context || '', body.research_mode || 'exegetical_archive');
+      }
+      return {};
+    }
+
     async function refreshStatus() {
       try {
-        const res = await fetch('/api/status');
-        const data = await res.json();
+        const data = await apiJson('/api/status');
         document.getElementById('hdr-sources').textContent = data.counts.sources;
         document.getElementById('hdr-scriptures').textContent = data.counts.scriptures;
 
@@ -428,7 +448,7 @@ Classical exegesis notes that the primary texts refute this claim: whereas other
       turnWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       try {
-        const res = await fetch('/api/research/query', {
+        const data = await apiJson('/api/research/query', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -438,7 +458,6 @@ Classical exegesis notes that the primary texts refute this claim: whereas other
             use_llm: true
           })
         });
-        const data = await res.json();
         activeParentContext = question;
         saveSessionItem(question, data);
         turnWrapper.innerHTML = buildTurnHtml(data, turnId);
@@ -702,7 +721,7 @@ Classical exegesis notes that the primary texts refute this claim: whereas other
       `;
 
       try {
-        const res = await fetch('/api/research/query', {
+        const data = await apiJson('/api/research/query', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -712,7 +731,6 @@ Classical exegesis notes that the primary texts refute this claim: whereas other
             use_llm: true
           })
         });
-        const data = await res.json();
         bodyEl.dataset.loaded = 'true';
 
         const subBranches = (data.rebuttal_tree || []).slice(0, 2).map((sb, sIdx) => {
@@ -835,8 +853,7 @@ Classical exegesis notes that the primary texts refute this claim: whereas other
     }
 
     async function loadSourcesCatalog() {
-      const res = await fetch('/api/sources');
-      const data = await res.json();
+      const data = await apiJson('/api/sources');
       const container = document.getElementById('sources-container');
       container.innerHTML = data.sources.map(src => `
         <div class="p-4 rounded-xl white-card space-y-2 text-xs">
@@ -855,8 +872,7 @@ Classical exegesis notes that the primary texts refute this claim: whereas other
     }
 
     async function loadHermesDashboard() {
-      const res = await fetch('/api/hermes/dashboard');
-      const data = await res.json();
+      const data = await apiJson('/api/hermes/dashboard');
 
       const jobsContainer = document.getElementById('hermes-jobs-list');
       jobsContainer.innerHTML = data.jobs.map(job => `
