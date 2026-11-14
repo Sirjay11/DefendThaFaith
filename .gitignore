@@ -7,3 +7,6 @@ __pycache__/
 *.db-wal
 .DS_Store
 Thumbs.db
+.netlify
+.netlify/
+

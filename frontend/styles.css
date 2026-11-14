@@ -6,12 +6,25 @@
   --text-secondary: #4b5563;
   --text-muted: #6b7280;
   --accent-primary: #7c2d12;
-  --accent-hover: #991b1b;
-  --accent-soft: #fef2f2;
+  --accent-hover: #5c1f0b;
+  --accent-soft: #faf5f2;
   --border-hairline: #e5e7eb;
   --border-strong: #d1d5db;
   --font-serif: Georgia, "Times New Roman", serif;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+}
+
+/* Digital Minimalism Monochrome Mode */
+html.mono-mode {
+  --bg-surface: #f7f7f7;
+  --bg-elevated: #efefef;
+  --accent-primary: #111827;
+  --accent-hover: #000000;
+  --accent-soft: #f5f5f5;
+}
+
+html.mono-mode * {
+  filter: grayscale(100%);
 }
 
 * {
@@ -24,23 +37,40 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .editorial-serif {
   font-family: var(--font-serif);
 }
 
+.accent-text {
+  color: var(--accent-primary);
+}
+
+.accent-bg {
+  background-color: var(--accent-primary);
+}
+
+.accent-bg:hover {
+  background-color: var(--accent-hover);
+}
+
 .prompt-shell {
   background: var(--bg-canvas);
   border: 1px solid var(--border-strong);
-  box-shadow: 0 4px 20px -2px rgba(17, 24, 39, 0.06);
+  box-shadow: 0 2px 12px -2px rgba(17, 24, 39, 0.04);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .prompt-shell:focus-within {
   border-color: var(--accent-primary);
-  box-shadow: 0 6px 24px -3px rgba(124, 45, 18, 0.12);
+  box-shadow: 0 4px 18px -3px rgba(17, 24, 39, 0.09);
+}
+
+.surface-note {
+  background-color: var(--bg-surface);
+  border-left: 2px solid var(--accent-primary);
 }
 
 .surface-card {
@@ -54,15 +84,41 @@ body {
 }
 
 .rebuttal-branch {
-  border-left: 2px solid var(--border-strong);
+  border-left: 1px solid var(--border-strong);
   transition: border-color 0.15s ease;
 }
 
 .rebuttal-branch.expanded {
-  border-left-color: var(--accent-primary);
+  border-left: 2px solid var(--accent-primary);
 }
 
 .drawer-backdrop {
-  background: rgba(17, 24, 39, 0.25);
+  background: rgba(17, 24, 39, 0.2);
   backdrop-filter: blur(2px);
+}
+
+/* Clean custom disclosure toggle */
+details.quiet-disclosure > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details.quiet-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.quiet-disclosure[open] > summary .disclosure-plus {
+  display: none;
+}
+
+details.quiet-disclosure:not([open]) > summary .disclosure-minus {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
